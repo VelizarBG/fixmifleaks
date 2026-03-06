@@ -6,6 +6,7 @@ import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import org.objectweb.asm.Opcodes;
+import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,8 +19,11 @@ import java.lang.ref.WeakReference;
 @Mixin(value = MobEffectInstance.class, priority = 1500)
 public class MobEffectInstanceMixin {
     @Unique
+    private static final String ATTACHED_ENTITY_DESC = "Lnet/minecraft/world/effect/MobEffectInstance;things$attachedEntity:Lnet/minecraft/world/entity/LivingEntity;";
+    @Unique
     private WeakReference<LivingEntity> fixmifleaks$things$attachedEntityRef = new WeakReference<>(null);
 
+    @Dynamic
     @TargetHandler(
             mixin = "com.glisco.things.mixin.StatusEffectInstanceMixin",
             name = "things$setAttachedEntity"
@@ -28,7 +32,7 @@ public class MobEffectInstanceMixin {
             method = "@MixinSquared:Handler",
             at = @At(
                     value = "FIELD",
-                    target = "Lnet/minecraft/world/effect/MobEffectInstance;things$attachedEntity:Lnet/minecraft/world/entity/LivingEntity;",
+                    target = ATTACHED_ENTITY_DESC,
                     opcode = Opcodes.PUTFIELD
             )
     )
@@ -36,6 +40,7 @@ public class MobEffectInstanceMixin {
         fixmifleaks$things$attachedEntityRef = new WeakReference<>(entity);
     }
 
+    @Dynamic
     @TargetHandler(
             mixin = "com.glisco.things.mixin.StatusEffectInstanceMixin",
             name = "things$getAttachedEntity"
@@ -44,7 +49,7 @@ public class MobEffectInstanceMixin {
             method = "@MixinSquared:Handler",
             at = @At(
                     value = "FIELD",
-                    target = "Lnet/minecraft/world/effect/MobEffectInstance;things$attachedEntity:Lnet/minecraft/world/entity/LivingEntity;",
+                    target = ATTACHED_ENTITY_DESC,
                     opcode = Opcodes.GETFIELD
             )
     )
@@ -52,6 +57,7 @@ public class MobEffectInstanceMixin {
         return fixmifleaks$things$attachedEntityRef.get();
     }
 
+    @Dynamic
     @TargetHandler(
             mixin = "com.glisco.things.mixin.StatusEffectInstanceMixin",
             name = "skipUpdate"
@@ -60,7 +66,7 @@ public class MobEffectInstanceMixin {
             method = "@MixinSquared:Handler",
             at = @At(
                     value = "FIELD",
-                    target = "Lnet/minecraft/world/effect/MobEffectInstance;things$attachedEntity:Lnet/minecraft/world/entity/LivingEntity;",
+                    target = ATTACHED_ENTITY_DESC,
                     opcode = Opcodes.GETFIELD
             )
     )

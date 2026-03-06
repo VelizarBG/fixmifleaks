@@ -8,6 +8,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.world.entity.LivingEntity;
 import org.objectweb.asm.Opcodes;
+import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,8 +22,11 @@ import java.lang.ref.WeakReference;
 @Mixin(value = HumanoidArmorLayer.class, priority = 1500)
 public class HumanoidArmorLayerMixin {
     @Unique
+    private static final String GL_STORED_ENTITY_DESC = "name=/((?i)[a-z0-9]+\\$)?(geckolib3\\$)?gl_storedEntity(\\$\\d+)?/";
+    @Unique
     private WeakReference<LivingEntity> fixmifleaks$geckolib3$gl_storedEntity = new WeakReference<>(null);
 
+    @Dynamic
     @TargetHandler(
             mixin = "software.bernie.geckolib3.mixins.fabric.MixinArmorFeatureRenderer",
             name = "storeEntity"
@@ -31,7 +35,7 @@ public class HumanoidArmorLayerMixin {
             method = "@MixinSquared:Handler",
             at = @At(
                     value = "FIELD",
-                    target = "name=/((?i)[a-z0-9]+\\$)?(geckolib3\\$)?gl_storedEntity(\\$\\d+)?/",
+                    target = GL_STORED_ENTITY_DESC,
                     opcode = Opcodes.PUTFIELD
             )
     )
@@ -39,6 +43,7 @@ public class HumanoidArmorLayerMixin {
         fixmifleaks$geckolib3$gl_storedEntity = new WeakReference<>(entity);
     }
 
+    @Dynamic
     @TargetHandler(
             mixin = "software.bernie.geckolib3.mixins.fabric.MixinArmorFeatureRenderer",
             name = "removeStored"
@@ -47,7 +52,7 @@ public class HumanoidArmorLayerMixin {
             method = "@MixinSquared:Handler",
             at = @At(
                     value = "FIELD",
-                    target = "name=/((?i)[a-z0-9]+\\$)?(geckolib3\\$)?gl_storedEntity(\\$\\d+)?/",
+                    target = GL_STORED_ENTITY_DESC,
                     opcode = Opcodes.PUTFIELD
             )
     )
@@ -55,6 +60,7 @@ public class HumanoidArmorLayerMixin {
         fixmifleaks$geckolib3$gl_storedEntity = new WeakReference<>(entity);
     }
 
+    @Dynamic
     @TargetHandler(
             mixin = "software.bernie.geckolib3.mixins.fabric.MixinArmorFeatureRenderer",
             name = "selectArmorModel"
@@ -63,7 +69,7 @@ public class HumanoidArmorLayerMixin {
             method = "@MixinSquared:Handler",
             at = @At(
                     value = "FIELD",
-                    target = "name=/((?i)[a-z0-9]+\\$)?(geckolib3\\$)?gl_storedEntity(\\$\\d+)?/",
+                    target = GL_STORED_ENTITY_DESC,
                     opcode = Opcodes.GETFIELD
             )
     )
@@ -71,6 +77,7 @@ public class HumanoidArmorLayerMixin {
         return fixmifleaks$geckolib3$gl_storedEntity.get();
     }
 
+    @Dynamic
     @TargetHandler(
             mixin = "software.bernie.geckolib3.mixins.fabric.MixinArmorFeatureRenderer",
             name = "getArmorTexture"
@@ -79,7 +86,7 @@ public class HumanoidArmorLayerMixin {
             method = "@MixinSquared:Handler",
             at = @At(
                     value = "FIELD",
-                    target = "name=/((?i)[a-z0-9]+\\$)?(geckolib3\\$)?gl_storedEntity(\\$\\d+)?/",
+                    target = GL_STORED_ENTITY_DESC,
                     opcode = Opcodes.GETFIELD
             )
     )
