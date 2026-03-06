@@ -15,9 +15,9 @@ import velizarbg.fixmifleaks.ClearableRenderer;
 @Environment(EnvType.CLIENT)
 @Mixin(value = LivingEntityRenderer.class, priority = 1500)
 public class LivingEntityRendererMixin implements ClearableRenderer {
-    @Shadow
+    @Shadow(remap = false)
     private EMFEntity emf$heldEntity;
-    @Shadow
+    @Shadow(remap = false)
     private ETFEntity etf$heldEntity;
 
     @Override
