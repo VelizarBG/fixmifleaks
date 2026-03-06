@@ -1,0 +1,33 @@
+name: publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v6
+      - name: validate gradle wrapper
+        uses: gradle/actions/wrapper-validation@v5
+      - name: setup jdks
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: | # 17 for compiling the mod; 25 for Gradle
+            17
+            25
+          cache: 'gradle'
+      - name: make gradle wrapper executable
+        run: chmod +x ./gradlew
+      - name: build
+        run: ./gradlew build
+      - name: upload jar to release
+        uses: AButler/upload-release-assets@v3.0
+        with:
+          files: 'build/libs/*.jar;!build/libs/*-sources.jar'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}

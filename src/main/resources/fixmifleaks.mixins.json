@@ -1,0 +1,35 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "velizarbg.fixmifleaks.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "plugin": "velizarbg.fixmifleaks.MixinConfigPlugin",
+  "mixins": [
+    "ChannelRegistryMixin",
+    "MobEffectInstanceMixin"
+  ],
+  "client": [
+    "BlockEntityRenderDispatcherAccessor",
+    "ClientLevelAccessor",
+    "ClientPacketListenerMixin",
+    "EntityRenderDispatcherAccessor",
+    "HumanoidArmorLayerMixin",
+    "LivingEntityRendererMixin",
+    "LocalPlayerAccessor",
+    "MinecraftMixin",
+    "SoundFXProcessorMixin",
+    "TrinketScreenManagerMixin",
+    "geckolib.AnimationTickerMixin",
+    "geckolib.ExtendedGeoEntityRendererMixin",
+    "geckolib.GeoBlockRendererMixin",
+    "geckolib.GeoEntityRendererMixin",
+    "geckolib.GeoProjectilesRendererMixin",
+    "geckolib.HumanoidArmorLayerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixinextras": {
+    "minVersion": "0.5.0"
+  }
+}

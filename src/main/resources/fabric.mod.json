@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "fixmifleaks",
+  "version": "${version}",
+  "name": "Fix MIF Leaks",
+  "description": "Fixes some memory leaks in mods MI: Foundation uses",
+  "authors": [
+    "VelizarBG"
+  ],
+  "contact": {
+    "sources": "https://github.com/VelizarBG/fixmifleaks",
+    "issues": "https://github.com/VelizarBG/fixmifleaks/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/fixmifleaks/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "velizarbg.fixmifleaks.FixMIFLeaksClient"
+    ],
+    "main": [
+      "velizarbg.fixmifleaks.FixMIFLeaks"
+    ]
+  },
+  "mixins": [
+    "fixmifleaks.mixins.json"
+  ],
+  "depends": {
+    "minecraft": "${minecraft_version}",
+    "fabricloader": "${loader_dependency}",
+    "fabric-api": "*"
+  }
+}
