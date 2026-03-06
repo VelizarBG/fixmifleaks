@@ -31,3 +31,8 @@ jobs:
         with:
           files: 'build/libs/*.jar;!build/libs/*-sources.jar'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: publish jar
+        env:
+          curseforge_key: ${{ secrets.CURSEFORGE_KEY }}
+          changelog: ${{ github.event.release.body }}
+        run: ./gradlew publish publishMods --stacktrace --no-daemon

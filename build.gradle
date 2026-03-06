@@ -1,5 +1,6 @@
 plugins {
     id 'fabric-loom' version '1.15.4'
+    id 'me.modmuss50.mod-publish-plugin' version '1.1.+'
     id 'maven-publish'
 }
 
@@ -43,6 +44,31 @@ repositories {
     }
 }
 
+class CurseForgeFile {
+    String projectSlug
+    String projectId
+    String fileId
+
+    CurseForgeFile(String projectSlug, String projectId, String fileId) {
+        this.projectSlug = projectSlug
+        this.projectId = projectId
+        this.fileId = fileId
+    }
+}
+def leakers = [
+        new CurseForgeFile("azurelib", "817423", "6004970"),
+        new CurseForgeFile("badpackets", "615134", "4784363"),
+        new CurseForgeFile("dynamic-surroundings-remastered-fabric-edition", "662374", "4064653"),
+        new CurseForgeFile("trinkets", "341284", "4343755"),
+        new CurseForgeFile("entity-model-features", "844662", "5304271"),
+        new CurseForgeFile("entity-texture-features-fabric", "568563", "5300636"),
+        new CurseForgeFile("geckolib", "388172", "4407239"),
+        new CurseForgeFile("things-fabric-back-ported-some-features", "1089554", "5656826"),
+]
+def leakerDependencies = [
+        new CurseForgeFile("emi", "580555", "6420939"), // depended by trinkets
+]
+
 dependencies {
     // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -55,18 +81,8 @@ dependencies {
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    [
-        "curse.maven:azurelib-817423:6004970",
-        "curse.maven:badpackets-615134:4784363",
-        "curse.maven:dynamic-surroundings-remastered-fabric-edition-662374:4064653",
-        "curse.maven:emi-580555:6420939",
-        "curse.maven:trinkets-341284:4343755",
-        "curse.maven:entity-model-features-844662:5304271",
-        "curse.maven:entity-texture-features-fabric-568563:5300636",
-        "curse.maven:geckolib-388172:4407239",
-        "curse.maven:things-fabric-back-ported-some-features-1089554:5656826",
-    ].forEach {
-        modCompileOnly(it)
+    [*leakers, *leakerDependencies].forEach {
+        modCompileOnly("curse.maven:${it.projectSlug}-${it.projectId}:${it.fileId}")
     }
 }
 
@@ -128,4 +144,32 @@ publishing {
         // The repositories here will be used for publishing your artifact, not for
         // retrieving dependencies.
     }
+}
+
+publishMods {
+    file = remapJar.archiveFile
+    additionalFiles.from(remapSourcesJar.archiveFile)
+    version = "$project.version"
+    displayName = "Fix MIF Leaks v$project.mod_version"
+    type = STABLE
+    modLoaders = ["fabric"]
+
+    System.getenv("changelog")?.with { String changelogg ->
+        changelog = changelogg
+    }
+
+    System.getenv("curseforge_key")?.with { String key ->
+        curseforge {
+            accessToken = key
+            projectId = project.curseforge_id
+            minecraftVersions = [project.minecraft_version]
+            javaVersions.add(JavaVersion.toVersion(targetJavaVersion))
+            leakers.forEach {
+                optional(it.projectSlug)
+            }
+        }
+    }
+
+    // When dry run is enabled the release assets will be saved to the build directory for testing.
+//	dryRun = true
 }
